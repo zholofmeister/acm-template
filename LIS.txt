@@ -1,0 +1,9 @@
+int now, a[maxn], len[maxn]; //now是a数组的长度，a是原数组，len是临时数组，a和len都从0开始计数
+int LIS() {
+	int lis = 0;
+	for (int i = 0; i < now; ++i) {
+		int x = lower_bound(len, len + lis, a[i]) - len;
+		len[x] = a[i], lis = max(lis, x + 1);
+	}
+	return lis;
+}

@@ -1,0 +1,94 @@
+#include <stdio.h>
+#include <vector>
+#include <algorithm>
+#include <string.h>
+#include <limits.h>
+#include <string>
+#include <iostream>
+#include <queue>
+#include <math.h>
+#include <map>
+#include <stack>
+#include <set>
+#define ms(x, n) memset(x,n,sizeof(x));
+#define forn(i, n) for(int i = 0; i < (int)n; i++)
+#define For(i, a, b) for(int i = (a); i <= (int)(b); i++)
+#define INF 0x3f3f3f3f
+#define PI acos(-1.0)
+#define mod(x) (x % 10000007)
+typedef long long int ll;
+typedef unsigned long long int ull;
+using namespace std;
+
+#define maxn 305
+int n , m, con[maxn][maxn], num_a[maxn], num_b[maxn], match[maxn], slack[maxn], book_a[maxn], book_b[maxn];
+
+bool dfs(int x)
+{
+    book_a[x] = 1;
+    for (int i = 0; i < m; ++i) {
+        if (book_b[i]) continue;
+        int gap = num_a[x] + num_b[i] - con[x][i];
+        if (!gap) {
+            book_b[i] = 1;
+            if (match[i] == -1 || dfs(match[i])) {
+                match[i] = x;
+                return true;
+            }
+        } else {
+            slack[i] = min(slack[i], gap);
+        }
+    }
+    return false;
+}
+
+int KM()
+{
+    ms(match, -1); ms(num_b, 0);
+    for (int i = 0; i < n; ++i) {
+        num_a[i] = con[i][0];
+        for (int j = 1; j < m; ++j) {
+            num_a[i] = max(num_a[i], con[i][j]);
+        }
+    }
+
+    for (int i = 0; i < n; ++i) {
+        fill(slack, slack + n, INF);
+        while (1) {
+            ms(book_a, 0); ms(book_b, 0);
+
+            if (dfs(i)) break;
+            int d = INF;
+            for (int j = 0; j < m; ++j)
+                if (!book_b[j]) d = min(d, slack[j]);
+
+            for (int j = 0; j < n; ++j) {
+                if (book_a[j]) num_a[j] -= d;
+            }
+            for (int j = 0; j < m; ++j) {
+                if (book_b[j]) num_b[j] += d;
+                else slack[j] -= d;
+            }
+        }
+    }
+    int res = 0;
+    for (int i = 0; i < m; ++i) res += con[match[i]][i];
+    return res;
+}
+
+int main()
+{
+    ios::sync_with_stdio(false);
+    cin.tie(0);
+    cout.tie(0);
+    while (cin >> n) {
+        m = n;
+        for (int i = 0; i < n; ++i)
+            for (int j = 0; j < m; ++j)
+                cin >> con[i][j];
+
+        int ans = KM();
+        printf("%d\n", ans);
+    }
+    return 0;
+}

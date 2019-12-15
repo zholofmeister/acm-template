@@ -1,0 +1,34 @@
+i64 fac[maxn],inv[maxn];
+i64 pow_mod(i64 a,i64 n)
+{
+    i64 ret =1;
+    while(n)
+    {
+        if(n&1) ret=ret*a%mod;
+          a=a*a%mod;
+          n>>=1;
+    }
+    return ret;
+}
+void init()
+{
+    fac[0]=1;
+    for(i64 i=1;i<maxn;i++)
+    {
+        fac[i]=fac[i-1]*i%mod;
+    }
+}
+i64 Cc(i64 x, i64 y)
+{
+    return fac[x]*pow_mod(fac[y]*fac[x-y]%mod,mod-2)%mod;
+}
+
+int main() {
+
+
+	init();  //主函数开头别忘了加init() !!!!!!!!!!!!!!!!!!!!!!!!!!!
+	Cc(n, m)....
+
+	
+	return 0;
+}
